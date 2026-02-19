@@ -22,3 +22,9 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+/generated/prisma
+
+/generated/prisma
+
+/generated/prisma
