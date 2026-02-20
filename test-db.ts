@@ -11,9 +11,9 @@ async function main() {
 	console.log("Connection OK! Users:", users);
 
 	// Optional: create one
-	// await prisma.user.create({
-	//   data: { email: 'test@example.com', name: 'Test User' }
-	// });
+	await prisma.user.create({
+		data: { email: "test@example.com", name: "Test User" },
+	});
 }
 
 main()
