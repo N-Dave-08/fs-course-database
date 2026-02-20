@@ -1,14 +1,3 @@
-Here's an **updated and improved version** of your exercise instructions, taking into account everything we've seen in your actual session (Docker + psql issues, quoting mistakes, duplicate inserts, prompt confusion, etc.).
-
-The main changes are:
-
-- More realistic Docker-focused setup instructions
-- Clearer connection examples (using user `postgres` or `dave`)
-- Warnings & fixes for the most common beginner psql traps you hit
-- Safer/more forgiving `03_crud.sql` instructions (idempotent inserts)
-- Better guidance on string quoting (single vs double quotes)
-- Modern one-liner ways to run files + troubleshooting tips
-
 ```markdown
 # Exercises 01: Database Fundamentals (SQL First)
 
@@ -254,7 +243,3 @@ psql -U postgres -h localhost -d appdb -f exercises/sql/04_joins.sql
 - psql prompt changes (`#` vs `'#`) tell you when something is wrong
 - Constraints save you from bad data — even when your app code has bugs
 ```
-
-This version should prevent most of the issues you ran into and give clearer guidance for someone following the same path.
-
-Let me know if you'd like to adjust difficulty, add more hints, or include a sample solution file structure.
