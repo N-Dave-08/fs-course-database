@@ -1,3 +1,8 @@
+### Updated File Content (Copy-Paste Ready)
+
+Replace the existing file with this:
+
+```markdown
 # Lesson 2: Schema Definition (Long-form Enhanced)
 
 > Your Prisma schema is the “contract” between your application and your database. Good schema design makes your code safer, migrations cleaner, and performance problems easier to reason about.
@@ -40,10 +45,14 @@ flowchart LR
 
 A typical Prisma schema includes:
 - `generator`: Prisma Client generation settings
-- `datasource`: DB connection settings
+- `datasource`: DB provider settings (connection URL is now configured separately in Prisma 7+)
 - `model`: tables/entities
 
-Example skeleton:
+**Important (Prisma 7+ update):**  
+Do **not** include `url = env("DATABASE_URL")` in the `datasource` block anymore — it causes validation errors (P1012).  
+Instead, connection details are handled in `prisma.config.ts` (already set up in your project).
+
+Correct skeleton:
 
 ```prisma
 generator client {
@@ -52,7 +61,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // url is NO LONGER supported here in Prisma 7+
+  // Connection is configured via prisma.config.ts
 }
 ```
 
@@ -167,8 +177,13 @@ Autoincrement ints are simple; UUIDs can be useful for public IDs and distribute
 - TypeScript errors or missing fields in autocomplete
 
 **Solutions:**
-1. Run `prisma generate`.
-2. Apply migrations if schema changed.
+1. Run `npx prisma generate`.
+2. Apply migrations if schema changed (`npx prisma migrate dev --name ...`).
+
+### Issue: Validation error about `url` in datasource (P1012)
+
+**Cause:** Old tutorials include `url = env("DATABASE_URL")` in `schema.prisma`.
+**Solution:** Remove it entirely — your `prisma.config.ts` handles the connection.
 
 ## Advanced Patterns (Preview)
 
@@ -192,7 +207,7 @@ If you need to filter/join often, prefer normalized relational fields.
 
 Now that you can define schemas:
 
-1. ✅ **Practice**: Add a `User` model with email uniqueness and timestamps
+1. ✅ **Practice**: Add a `User` model with email uniqueness and timestamps (use the updated datasource block above)
 2. ✅ **Experiment**: Add an optional field and handle it in queries
 3. 📖 **Next Lesson**: Learn about [Basic Models](./lesson-03-basic-models.md)
 4. 💻 **Complete Exercises**: Work through [Exercises 02](./exercises-02.md)
@@ -201,6 +216,7 @@ Now that you can define schemas:
 
 - [Prisma Schema Reference](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference)
 - [PostgreSQL: Constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
+- [Prisma 7 Upgrade Guide (Datasource Changes)](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7)
 
 ---
 
@@ -208,3 +224,4 @@ Now that you can define schemas:
 - `schema.prisma` defines your DB structure and generates your typed client.
 - Use types + modifiers to enforce correctness (required, unique, defaults).
 - Model optional fields intentionally to reduce null-handling complexity.
+- In Prisma 7+, move connection URLs out of `schema.prisma` into `prisma.config.ts`.
