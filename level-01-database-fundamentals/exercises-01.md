@@ -32,7 +32,7 @@ docker run -d \
   --name learn-postgres \
   -e POSTGRES_PASSWORD=mysecret123 \
   -p 5432:5432 \
-  postgres:16
+  postgres:16 // or latest
 ```
 
 Then connect with:
