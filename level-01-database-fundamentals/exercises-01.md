@@ -177,10 +177,10 @@ psql -U postgres -h localhost -f exercises/sql/04_joins.sql
 ```
 
 ## Verification Checklist
-- [ ] I can connect to Postgres and run basic queries
-- [ ] I created `users` and `posts` with correct constraints
-- [ ] I can insert, update, and delete safely (with `WHERE`)
-- [ ] I can join users and posts to produce “app-shaped” results
+- [X] I can connect to Postgres and run basic queries
+- [X] I created `users` and `posts` with correct constraints
+- [X] I can insert, update, and delete safely (with `WHERE`)
+- [X] I can join users and posts to produce “app-shaped” results
 
 ## Next Steps
 Now that you understand database fundamentals in SQL:
