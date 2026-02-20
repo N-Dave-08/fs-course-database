@@ -12,30 +12,21 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  name      String?
-  roles Role[]
-  posts     Post[]
-  profile   Profile?
+  name      String
+  bio       String?
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
 
-model Post {
-  id        Int @id @default(autoincrement())
-  userId    Int
-  user      User @relation(fields: [userId], references:[id])
-}
-
-model Profile {
-  id        Int   @id @default(autoincrement())
-  userId    Int   @unique
-  user      User  @relation(fields: [userId], references: [id])
-}
-
-model Role {
-  id Int @id @default(autoincrement())
-  users User[]
+  @@map("users")
 }
