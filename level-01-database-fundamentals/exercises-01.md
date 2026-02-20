@@ -1,162 +1,260 @@
+Here's an **updated and improved version** of your exercise instructions, taking into account everything we've seen in your actual session (Docker + psql issues, quoting mistakes, duplicate inserts, prompt confusion, etc.).
+
+The main changes are:
+
+- More realistic Docker-focused setup instructions
+- Clearer connection examples (using user `postgres` or `dave`)
+- Warnings & fixes for the most common beginner psql traps you hit
+- Safer/more forgiving `03_crud.sql` instructions (idempotent inserts)
+- Better guidance on string quoting (single vs double quotes)
+- Modern one-liner ways to run files + troubleshooting tips
+
+```markdown
 # Exercises 01: Database Fundamentals (SQL First)
 
 ## Learning Objectives
-
 By completing these exercises, you will:
-- ✅ Connect to PostgreSQL and run SQL safely
-- ✅ Create tables with primary keys and foreign keys
-- ✅ Practice CRUD with `SELECT` / `INSERT` / `UPDATE` / `DELETE`
-- ✅ Use joins to combine related tables
-- ✅ Build the mental bridge between “relational concepts” and real SQL
+- ✅ Connect to PostgreSQL (Docker or local) and run SQL safely
+- ✅ Create tables with primary keys, unique constraints and foreign keys
+- ✅ Practice safe **CRUD** with `INSERT` / `SELECT` / `UPDATE` / `DELETE`
+- ✅ Use `JOIN`s to combine related tables
+- ✅ Build confidence reading psql prompts and fixing common errors
 
 ## Before You Start
 
 **Prerequisites:**
-- PostgreSQL 16+ running (local install or Docker)
-- Ability to run `psql` (or another SQL client)
+- Docker installed and running (or local PostgreSQL 16+)
+- Basic terminal usage
 - Completed Level 1 lessons:
   - `lesson-01-introduction.md`
   - `lesson-02-relational-concepts.md`
   - `lesson-03-sql-basics.md`
 
-**Setup:**
-1. Navigate to `fs-course-database/level-01-database-fundamentals/`
-2. Create an exercises folder for your deliverables:
-   - `exercises/sql/`
-3. Decide how you’ll connect:
-   - local Postgres (recommended if you already have it)
-   - Docker (fine for learning)
+**Recommended Setup (Docker – clean & isolated)**
 
----
+1. Create and start PostgreSQL container (do this once):
+
+```bash
+docker run -d \
+  --name learn-postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=mysecret123 \
+  -e POSTGRES_DB=appdb \
+  -p 5432:5432 \
+  -v pg-learn-data:/var/lib/postgresql/data \
+  postgres:16
+```
+
+2. Test connection from your terminal:
+
+```bash
+# Option A – superuser (easiest for learning)
+psql -U postgres -h localhost -d appdb
+
+# Option B – if you created user Dave earlier
+psql -U dave -h localhost -d appdb
+```
+
+Enter password (`mysecret123` or whatever you set).
+
+3. Create working folder:
+
+```bash
+mkdir -p fs-course-database/level-01-database-fundamentals/exercises/sql
+cd fs-course-database/level-01-database-fundamentals
+```
 
 ## Exercise 1: Connect and Inspect
-
-**Objective:** Confirm you can connect to Postgres and run basic commands.
 
 **Deliverable:** `exercises/sql/01_connection_notes.md`
 
 **Instructions:**
-1. Connect to Postgres using `psql` (or your preferred client).
-2. Run:
-   - `SELECT 1;`
-   - list databases
-   - list tables in the current database
 
-**Verification:**
-- You can connect without errors
-- `SELECT 1;` returns a single row
+1. Connect using one of the commands above
+2. Run these commands and note the output:
 
----
+```sql
+SELECT 1;
+\l                 -- list all databases
+\conninfo          -- show current connection
+\dt                -- list tables in current database
+SELECT version();  -- PostgreSQL version
+```
+
+**Common fixes:**
+- password error → check what you set in `-e POSTGRES_PASSWORD=`
+- connection refused → make sure container is running (`docker ps`)
 
 ## Exercise 2: Create Tables (Users + Posts)
-
-**Objective:** Turn the relational concepts into real tables with constraints.
 
 **Deliverable:** `exercises/sql/02_schema.sql`
 
 **Instructions:**
-Create two tables:
-1. `users`
-2. `posts` with a foreign key to `users`
 
-**Expected shape (guide, not strict):**
+Create this file with safe, re-runnable DDL:
 
 ```sql
 -- exercises/sql/02_schema.sql
+DROP TABLE IF EXISTS posts CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  email TEXT NOT NULL UNIQUE,
-  name TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id          SERIAL PRIMARY KEY,
+    email       TEXT NOT NULL UNIQUE,
+    name        TEXT NOT NULL,
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE posts (
-  id SERIAL PRIMARY KEY,
-  user_id INT NOT NULL REFERENCES users(id),
-  title TEXT NOT NULL,
-  content TEXT,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES users(id),
+    title       TEXT NOT NULL,
+    content     TEXT,
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**Verification:**
-- You can run the file without errors
-- `\d users` and `\d posts` show:
-  - PK on `id`
-  - unique constraint on `users.email`
-  - FK from `posts.user_id` → `users.id`
+Run it:
 
----
+```bash
+psql -U postgres -h localhost -d appdb -f exercises/sql/02_schema.sql
+```
+
+Verify:
+
+```sql
+\d users
+\d posts
+```
 
 ## Exercise 3: CRUD (Write Safely)
-
-**Objective:** Practice CRUD and the safety rule: use `WHERE` for updates/deletes.
 
 **Deliverable:** `exercises/sql/03_crud.sql`
 
 **Instructions:**
-In `exercises/sql/03_crud.sql`, write SQL statements that:
-1. Insert 2 users
-2. Insert 3 posts (at least 2 posts for the same user)
-3. Select:
-   - all users
-   - posts for a given `user_id`
-4. Update a user’s name (use `WHERE`)
-5. Delete a post (use `WHERE`)
 
-**Verification:**
-- Running the script creates rows
-- Updates and deletes affect only the intended rows
+Write **safe / re-runnable** statements:
 
----
+```sql
+-- exercises/sql/03_crud.sql
+
+-- Insert users safely (skip if already exist)
+INSERT INTO users (email, name)
+VALUES 
+    ('bob@domain.com',   'Bob'),
+    ('jacob@domain.com', 'Jacob')
+ON CONFLICT (email) DO NOTHING;
+
+-- Remember the IDs (or query them)
+-- SELECT id, email, name FROM users;
+
+-- Insert posts (use real user IDs from the query above)
+INSERT INTO posts (user_id, title, content)
+VALUES
+    (1, 'Bob''s first post',   'Hello from Bob! This is my first post.'),
+    (1, 'Bob''s second post',  'Another thought from Bob.'),
+    (2, 'Jacob''s intro',      'Hi, I''m Jacob and this is my first post.')
+ON CONFLICT DO NOTHING;
+
+-- Select examples
+SELECT * FROM users ORDER BY id;
+SELECT * FROM posts ORDER BY id;
+
+-- Example update (always use WHERE!)
+UPDATE users 
+SET name = 'Robert'
+WHERE email = 'bob@domain.com';
+
+-- Example delete (always use WHERE!)
+DELETE FROM posts 
+WHERE title = 'Bob''s second post';
+```
+
+**Important notes:**
+- Use **single quotes `' '`** for strings — **not double quotes**
+- To escape apostrophe inside string → use two single quotes: `Bob''s`
+- Run the file multiple times → it should not error (thanks to `ON CONFLICT DO NOTHING`)
+
+Run:
+
+```bash
+psql -U postgres -h localhost -d appdb -f exercises/sql/03_crud.sql
+```
 
 ## Exercise 4: Join Queries (Read Like a Real App)
-
-**Objective:** Combine tables with joins.
 
 **Deliverable:** `exercises/sql/04_joins.sql`
 
 **Instructions:**
-Write queries that:
-1. Return posts with the author’s name and email
-2. Return users with a count of posts (include users with 0 posts)
 
-**Hint:** You’ll likely use `INNER JOIN` and `LEFT JOIN`, plus `GROUP BY`.
+```sql
+-- 1. Posts with author name & email
+SELECT 
+    p.id,
+    p.title,
+    p.content,
+    u.name AS author,
+    u.email
+FROM posts p
+INNER JOIN users u ON p.user_id = u.id
+ORDER BY p.created_at DESC;
 
----
-
-## Running Exercises
-
-Use `psql` to run files (one approach):
-
-```bash
-psql "<your_connection_string>" -f exercises/sql/02_schema.sql
-psql "<your_connection_string>" -f exercises/sql/03_crud.sql
-psql "<your_connection_string>" -f exercises/sql/04_joins.sql
+-- 2. Users + post count (including users with 0 posts)
+SELECT 
+    u.id,
+    u.name,
+    u.email,
+    COUNT(p.id) AS post_count
+FROM users u
+LEFT JOIN posts p ON u.id = p.user_id
+GROUP BY u.id, u.name, u.email
+ORDER BY post_count DESC, u.name;
 ```
 
----
+Run & verify output looks like real application data.
+
+## Running Exercises – Quick Reference
+
+```bash
+# One-time connection test
+psql -U postgres -h localhost -d appdb
+
+# Run any file
+psql -U postgres -h localhost -d appdb -f exercises/sql/02_schema.sql
+psql -U postgres -h localhost -d appdb -f exercises/sql/03_crud.sql
+psql -U postgres -h localhost -d appdb -f exercises/sql/04_joins.sql
+
+# Or inside psql:
+\i exercises/sql/03_crud.sql
+```
+
+**Helpful psql commands when stuck:**
+- `\reset`          – clear unfinished query
+- Ctrl+C            – cancel current input
+- `\q`              – quit psql
+- `\h INSERT`       – show syntax help
+- `\set ECHO all`   – see more verbose output
 
 ## Verification Checklist
-
-- [ ] I can connect to Postgres and run basic queries
-- [ ] I created `users` and `posts` with correct constraints
-- [ ] I can insert, update, and delete safely (with `WHERE`)
-- [ ] I can join users and posts to produce “app-shaped” results
+- [ ] Can connect and run `SELECT 1;`
+- [ ] Tables `users` and `posts` created with correct constraints
+- [ ] Can run `03_crud.sql` multiple times without errors
+- [ ] Updates & deletes only affect intended rows (used `WHERE`)
+- [ ] Joins return meaningful combined results
 
 ## Next Steps
+- Add a `comments` table with foreign keys to `posts` and `users`
+- Create an index: `CREATE INDEX ON posts(user_id);`
+- Move to Prisma / ORM layer in the next level
 
-Now that you understand database fundamentals in SQL:
+**Key Takeaways (updated)**
+- Use **single quotes** for string values
+- Always write `WHERE` when updating/deleting
+- `ON CONFLICT … DO NOTHING` makes scripts re-runnable
+- psql prompt changes (`#` vs `'#`) tell you when something is wrong
+- Constraints save you from bad data — even when your app code has bugs
+```
 
-1. ✅ **Practice**: Add one more table (e.g., `comments`) with FKs
-2. ✅ **Experiment**: Add an index on `posts.user_id` (preview for Level 6)
-3. 📖 **Next Level**: Move to Prisma basics (typed schema + client)
-4. 💻 **Complete Exercises**: Continue with [Exercises 02](../level-02-prisma-basics/exercises-02.md)
+This version should prevent most of the issues you ran into and give clearer guidance for someone following the same path.
 
----
-
-**Key Takeaways:**
-- SQL is how you create and query relational data.
-- Constraints (PK/unique/FK) protect correctness even when apps are buggy.
-- Joins are the “relational superpower” for combining entities.
+Let me know if you'd like to adjust difficulty, add more hints, or include a sample solution file structure.
