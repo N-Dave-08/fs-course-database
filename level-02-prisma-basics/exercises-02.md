@@ -1,4 +1,4 @@
-# Exercises 02: Prisma Basics (Schema + Client)
+X# Exercises 02: Prisma Basics (Schema + Client)
 
 ## Learning Objectives
 
@@ -178,10 +178,10 @@ npx ts-node exercises/exercise-01.ts
 
 ## Verification Checklist
 
-- [ ] My schema is formatted and valid
-- [ ] Migration created and applied successfully
-- [ ] Prisma Studio shows my table
-- [ ] My CRUD script runs successfully
+- [X] My schema is formatted and valid
+- [X] Migration created and applied successfully
+- [X] Prisma Studio shows my table
+- [X] My CRUD script runs successfully
 
 ## Next Steps
 
