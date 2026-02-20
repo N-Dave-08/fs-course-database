@@ -1,8 +1,3 @@
-### Updated File Content (Copy-Paste Ready)
-
-Replace the existing file with this:
-
-```markdown
 # Lesson 2: Schema Definition (Long-form Enhanced)
 
 > Your Prisma schema is the “contract” between your application and your database. Good schema design makes your code safer, migrations cleaner, and performance problems easier to reason about.
