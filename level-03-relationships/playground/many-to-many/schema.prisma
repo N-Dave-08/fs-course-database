@@ -15,7 +15,7 @@ generator client {
 model Role {
   id        Int      @id @default(autoincrement())
   name String @unique
-  users  UserRole[]
+  user  User[]
 }
 
 model UserRole {
@@ -23,8 +23,8 @@ model UserRole {
   roleId Int
   assignedAt DateTime @default(now())
 
-  users User @relation(fields: [userId], references: [id])
-  roles Role @relation(fields: [roleId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  role Role @relation(fields: [roleId]), references: [id]
 
   @@id([userId, roleId])
 }
@@ -34,8 +34,8 @@ model User {
   email     String   @unique
   name      String
   bio       String?
-  roles      UserRole[]
-  posts      Post[]
+  role      Role[]
+  post      Post[]
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,16 +48,16 @@ model Profile {
   id     Int     @id @default(autoincrement())
   bio    String?
   userId Int     @unique
-  users   User    @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
 
-  @@map("profiles")
+  @@map("profile")
 }
 
 model Post {
   id     Int    @id @default(autoincrement())
   title  String
   userId Int
-  users   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
-  @@map("posts")
+  @@map("post")
 }
