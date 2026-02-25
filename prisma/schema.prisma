@@ -13,32 +13,36 @@ generator client {
 }
 
 model Role {
-  id        Int      @id @default(autoincrement())
-  name String @unique
-  users  UserRole[]
+  id    Int        @id @default(autoincrement())
+  name  String     @unique
+  users UserRole[]
+
+  @@map("roles")
 }
 
 model UserRole {
-  userId Int
-  roleId Int
+  userId     Int
+  roleId     Int
   assignedAt DateTime @default(now())
 
   users User @relation(fields: [userId], references: [id])
   roles Role @relation(fields: [roleId], references: [id])
 
   @@id([userId, roleId])
+  @@map("user_roles")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
   name      String
+  age       Int
   bio       String?
-  roles      UserRole[]
-  posts      Post[]
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  roles     UserRole[]
+  posts     Post[]
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   profile   Profile?
 
   @@map("users")
@@ -48,7 +52,7 @@ model Profile {
   id     Int     @id @default(autoincrement())
   bio    String?
   userId Int     @unique
-  users   User    @relation(fields: [userId], references: [id])
+  users  User    @relation(fields: [userId], references: [id])
 
   @@map("profiles")
 }
@@ -57,7 +61,7 @@ model Post {
   id     Int    @id @default(autoincrement())
   title  String
   userId Int
-  users   User   @relation(fields: [userId], references: [id])
+  users  User   @relation(fields: [userId], references: [id])
 
   @@map("posts")
 }

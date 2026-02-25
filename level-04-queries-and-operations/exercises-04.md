@@ -97,10 +97,10 @@ npx ts-node exercises/exercise-04.ts
 
 ## Verification Checklist
 
-- [ ] I understand which operations return `null` vs throw
-- [ ] My list query uses stable ordering and pagination
-- [ ] I can compute counts and groupBy summaries
-- [ ] I can query relations with `include` and avoid overfetching with `select`
+- [X] I understand which operations return `null` vs throw
+- [X] My list query uses stable ordering and pagination
+- [X] I can compute counts and groupBy summaries
+- [X] I can query relations with `include` and avoid overfetching with `select`
 
 ## Next Steps
 
