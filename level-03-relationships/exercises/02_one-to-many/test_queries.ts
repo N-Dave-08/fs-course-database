@@ -58,6 +58,13 @@ async function main() {
 		},
 	});
 
+	// try onDelete: Cascade if working
+	await prisma.user.delete({
+		where: {
+			id: 6,
+		},
+	});
+
 	console.dir(userWithPosts, {
 		depth: null,
 	});

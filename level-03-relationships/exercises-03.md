@@ -375,13 +375,13 @@ npx prisma studio
 
 After completing all exercises, verify:
 
-- [ ] One-to-one relationship works
-- [ ] One-to-many relationship works
-- [ ] Many-to-many relationship works
-- [ ] Can query with include
-- [ ] Can filter related data
-- [ ] Cascade deletes work
-- [ ] Foreign key constraints enforced
+- [X] One-to-one relationship works
+- [X] One-to-many relationship works
+- [X] Many-to-many relationship works
+- [X] Can query with include
+- [X] Can filter related data
+- [X] Cascade deletes work
+- [X] Foreign key constraints enforced
 
 ## Troubleshooting
 
