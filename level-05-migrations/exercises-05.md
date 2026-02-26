@@ -111,10 +111,10 @@ npx ts-node exercises/exercise-02_backfill.ts
 
 ## Verification Checklist
 
-- [ ] I created migrations with descriptive names
-- [ ] I reviewed generated SQL for risk
-- [ ] I performed a phased change successfully
-- [ ] I wrote migration review notes like a real team
+- [X] I created migrations with descriptive names
+- [X] I reviewed generated SQL for risk
+- [X] I performed a phased change successfully
+- [X] I wrote migration review notes like a real team
 
 ## Next Steps
 
