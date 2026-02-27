@@ -46,6 +46,7 @@ model User {
   profile   Profile?
 
   @@map("users")
+  @@index([email, name])
 }
 
 model Profile {

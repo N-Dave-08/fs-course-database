@@ -101,10 +101,10 @@ npx ts-node exercises/exercise-03.ts
 
 ## Verification Checklist
 
-- [ ] I added indexes that match real query patterns
-- [ ] I added constraints that protect integrity
-- [ ] My optimized query uses `select` + pagination
-- [ ] I understand why indexes speed reads but slow writes
+- [X] I added indexes that match real query patterns
+- [X] I added constraints that protect integrity
+- [X] My optimized query uses `select` + pagination
+- [X] I understand why indexes speed reads but slow writes
 
 ---
 
